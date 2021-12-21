@@ -48,28 +48,34 @@ def wait_for(element, method, string):
             result = element.find_elements(By.CLASS_NAME, string)
         else:
             result = element.find_elements(By.CLASS_NAME, string)[0]
+    elif method == "NAME":
+        WebDriverWait(element, 10).until(
+            EC.visibility_of_element_located((
+            By.NAME, string)))
+        if len(element.find_elements(By.NAME, string)) > 1:
+            result = element.find_elements(By.NAME, string)
+        else:
+            result = element.find_elements(By.NAME, string)[0]
     else:
         return
     return result
 
 
-ID = input("ID를 입력하세요: ") #인스타그램 ID
-PW = input("비밀번호를 입력하세요: ") #인스타그램 PW
+ID = str(input("ID를 입력하세요: "))
+PW = str(input("비밀번호를 입력하세요: "))
 
 #화면 띄우기
 instagram = "https://instagram.com"
 driver = webdriver.Chrome('./chromedriver.exe')
 driver.get(instagram)
-
-#로딩하는 시간 기다리기
 time.sleep(2)
 
-#Login ID 속성값 찾고 입력하기
-login_id = driver.find_element_by_name('username')
+#Login ID 입력하기
+login_id = wait_for(driver, "NAME", "username")
 login_id.send_keys(ID)
 
-#Login PW 속성값 찾기 입력하기
-login_pw = driver.find_element_by_name('password')
+#Login PW 입력하기
+login_pw = wait_for(driver, "NAME", "password")
 login_pw.send_keys(PW)
 login_pw.send_keys(Keys.RETURN)
 time.sleep(3)
@@ -86,23 +92,34 @@ popup = wait_for(driver, "CSS_SELECTOR", popup_css)
 popup.send_keys(Keys.ENTER)
 time.sleep(1)
 
+
 # 게시글 dictionary 생성
 article_dict = {}
+
+# 좋아요 영역의 class명
+like_div_class = "fr66n"
+
 # 게시글 키 변수 생성
 key = 0
+# 현재 조회하는 게시글의 key
+now = 0
 # 좋아요 횟수 변수 생성
 like_cnt = 0
+# 조회할 게시글의 수
+m = 100
+# 좋아요할 게시글의 수
+n = 10
 
-# 좋아요를 N번 하거나 게시글을 M개 조회할 때까지 반복
+
+# 좋아요를 n번 하거나 게시글을 m개 조회할 때까지 반복
 while True:
 
-    # 현재 화면의 게시글 불러오기
+    # 현시점 화면의 전체 게시글 불러오기
+    # 인스타그램은 스크롤을 조금만 움직여도 article이 동적으로 변하므로
+    # 한 게시글의 탐색을 마칠 때마다 articles를 업데이트 하도록 함
     articles = wait_for(driver, "TAG_NAME", "article")
 
-    # 좋아요 영역의 class명
-    like_div_class = "fr66n"
-
-    # 현재 화면의 게시글마다 반복
+    # 업데이트된 articles를 dictionary에 넣어두는 과정
     for article in articles:
 
         # 게시글이 게시글 dictionary에 없는 경우
@@ -110,26 +127,39 @@ while True:
             # 키 +1 및 dictionary에 추가
             key += 1
             article_dict[key] = article
+    print(f"{key}번째 게시글까지 dictionary에 등록됨")
 
-            # 해당 게시글로 스크롤 이동
-            driver.execute_script("arguments[0].scrollIntoView();", article_dict[key])
-            print(f"{key}번째 게시글을 조회함")
-            time.sleep(2)
+    
+    # 게시글 탐색 시작
+    now += 1
 
-            # 좋아요 버튼 element 불러오기
-            like_div = wait_for(article_dict[key], "CLASS_NAME", like_div_class)
-            like_btn = wait_for(like_div, "TAG_NAME", "button")
+    try:
+        # 해당 게시글로 스크롤 이동
+        driver.execute_script("arguments[0].scrollIntoView();", article_dict[now])
+        print(f"{now}번째 게시글을 조회함")
+        time.sleep(2)
+    except:
+        # 어떤 이유에선지 불러온 article이 조회되지 않는 경우가 있음 -> 다음 게시글로 넘어감
+        continue
 
-            # 좋아요 버튼이 눌려있지 않은 경우
-            if len(like_btn.find_elements(By.TAG_NAME, "div")) > 1:
-                like_btn.send_keys(Keys.ENTER)
 
-                # 좋아요 횟수 +1
-                like_cnt += 1
-                print(f"{like_cnt}번째 좋아요: {key}번째 게시글")
-                time.sleep(2)
+    # 좋아요 버튼 element 불러오기
+    like_div = wait_for(article_dict[now], "CLASS_NAME", like_div_class)
+    like_btn = wait_for(like_div, "TAG_NAME", "button")
 
-                if like_cnt == 10:
-                    break
-    if key == 100:
+    # 좋아요 버튼이 눌려있지 않은 경우
+    if len(like_btn.find_elements(By.TAG_NAME, "div")) > 1:
+        like_btn.send_keys(Keys.ENTER)
+
+        # 좋아요 횟수 +1
+        like_cnt += 1
+        print(f"{like_cnt}번째 좋아요: {now}번째 게시글")
+        time.sleep(2)
+
+        if like_cnt == n:
+            break
+
+    if key == m:
         break
+
+

@@ -68,7 +68,6 @@ PW = str(input("비밀번호를 입력하세요: "))
 instagram = "https://instagram.com"
 driver = webdriver.Chrome('./chromedriver.exe')
 driver.get(instagram)
-time.sleep(2)
 
 #Login ID 입력하기
 login_id = wait_for(driver, "NAME", "username")
@@ -78,19 +77,16 @@ login_id.send_keys(ID)
 login_pw = wait_for(driver, "NAME", "password")
 login_pw.send_keys(PW)
 login_pw.send_keys(Keys.RETURN)
-time.sleep(3)
 
 # 첫 번째 팝업 지우기
 popup_css = "#react-root > section > main > div > div > div > div > button"
 popup = wait_for(driver, "CSS_SELECTOR", popup_css)
 popup.send_keys(Keys.ENTER)
-time.sleep(1)
 
 # 두 번째 팝업 지우기
 popup_css = "body > div.RnEpo.Yx5HN > div > div > div > div.mt3GC > button.aOOlW.HoLwm"
 popup = wait_for(driver, "CSS_SELECTOR", popup_css)
 popup.send_keys(Keys.ENTER)
-time.sleep(1)
 
 
 # 게시글 dictionary 생성
@@ -106,9 +102,9 @@ now = 0
 # 좋아요 횟수 변수 생성
 like_cnt = 0
 # 조회할 게시글의 수
-m = 100
+m = 200
 # 좋아요할 게시글의 수
-n = 10
+n = 100
 
 
 # 좋아요를 n번 하거나 게시글을 m개 조회할 때까지 반복
@@ -127,7 +123,6 @@ while True:
             # 키 +1 및 dictionary에 추가
             key += 1
             article_dict[key] = article
-    print(f"{key}번째 게시글까지 dictionary에 등록됨")
 
     
     # 게시글 탐색 시작
@@ -137,7 +132,6 @@ while True:
         # 해당 게시글로 스크롤 이동
         driver.execute_script("arguments[0].scrollIntoView();", article_dict[now])
         print(f"{now}번째 게시글을 조회함")
-        time.sleep(2)
     except:
         # 어떤 이유에선지 불러온 article이 조회되지 않는 경우가 있음 -> 다음 게시글로 넘어감
         continue
@@ -154,7 +148,6 @@ while True:
         # 좋아요 횟수 +1
         like_cnt += 1
         print(f"{like_cnt}번째 좋아요: {now}번째 게시글")
-        time.sleep(2)
 
         if like_cnt == n:
             break

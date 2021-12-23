@@ -1,2 +1,2 @@
 # botstagram
-automately push like button using selenium python
+automate instagram using Selenium Python

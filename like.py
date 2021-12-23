@@ -3,6 +3,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import time
 
 
 # element에서 method로 string을 찾을 때까지 대기하는 함수 생성
@@ -14,7 +15,7 @@ def wait_for(element, method, string):
 
         # element에서 CSS_SELECTOR로 string을 찾을 때까지 10초 대기
         WebDriverWait(element, 10).until(
-            EC.visibility_of_element_located((
+            EC.presence_of_element_located((
             By.CSS_SELECTOR, string)))
         # 찾은 element가 복수 개인 경우
         if len(element.find_elements(By.CSS_SELECTOR, string)) > 1:
@@ -25,7 +26,7 @@ def wait_for(element, method, string):
 
     elif method == "XPATH":
         WebDriverWait(element, 10).until(
-            EC.visibility_of_element_located((
+            EC.presence_of_element_located((
             By.XPATH, string)))
         if len(element.find_elements(By.XPATH, string)) > 1:
             result = element.find_elements(By.XPATH, string)
@@ -33,7 +34,7 @@ def wait_for(element, method, string):
             result = element.find_elements(By.XPATH, string)[0]
     elif method == "TAG_NAME":
         WebDriverWait(element, 10).until(
-            EC.visibility_of_element_located((
+            EC.presence_of_element_located((
             By.TAG_NAME, string)))
         if len(element.find_elements(By.TAG_NAME, string)) > 1:
             result = element.find_elements(By.TAG_NAME, string)
@@ -41,7 +42,7 @@ def wait_for(element, method, string):
             result = element.find_elements(By.TAG_NAME, string)[0]
     elif method == "CLASS_NAME":
         WebDriverWait(element, 10).until(
-            EC.visibility_of_element_located((
+            EC.presence_of_element_located((
             By.CLASS_NAME, string)))
         if len(element.find_elements(By.CLASS_NAME, string)) > 1:
             result = element.find_elements(By.CLASS_NAME, string)
@@ -49,7 +50,7 @@ def wait_for(element, method, string):
             result = element.find_elements(By.CLASS_NAME, string)[0]
     elif method == "NAME":
         WebDriverWait(element, 10).until(
-            EC.visibility_of_element_located((
+            EC.presence_of_element_located((
             By.NAME, string)))
         if len(element.find_elements(By.NAME, string)) > 1:
             result = element.find_elements(By.NAME, string)
@@ -131,8 +132,10 @@ while True:
         # 해당 게시글로 스크롤 이동
         driver.execute_script("arguments[0].scrollIntoView();", article_dict[now])
         print(f"{now}번째 게시글을 조회함")
+        time.sleep(1)
     except:
         # 어떤 이유에선지 불러온 article이 조회되지 않는 경우가 있음 -> 다음 게시글로 넘어감
+        print(f"{now}번째 게시글은 불러올 수 없음")
         continue
 
 

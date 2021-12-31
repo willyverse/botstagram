@@ -63,6 +63,7 @@ def wait_for(element, method, string):
 
 ID = str(input("ID를 입력하세요: "))
 PW = str(input("비밀번호를 입력하세요: "))
+SEARCING_KEYWORD = str(input("검색 키워드를 입력하세요: "))
 
 #화면 띄우기
 instagram = "https://instagram.com"
@@ -92,7 +93,7 @@ popup = wait_for(driver, "CSS_SELECTOR", popup_css)
 popup.send_keys(Keys.ENTER)
 time.sleep(1)
 
-driver.get(f"{instagram}/explore/tags/sylvanian")
+driver.get(f"{instagram}/explore/tags/{SEARCING_KEYWORD}")
 current_articles_css = "#react-root > section > main > article > div:nth-child(3) > div > div > div"
 like_subjects = list()
 subject_css = "body > div._2dDPU.CkGkG > div.zZYga > div > article > div > div.UE9AK > div > header > div.o-MQd > div.PQo_0 > div.e1e1d > span > a"

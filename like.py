@@ -144,17 +144,19 @@ while True:
     like_btn = wait_for(like_div, "TAG_NAME", "button")
 
     # 좋아요 버튼이 눌려있지 않은 경우
-    if len(like_btn.find_elements(By.TAG_NAME, "div")) > 1:
+    if like_btn.find_elements(By.XPATH, "div/span/*[name()='svg'][@aria-label='좋아요']") != []:
         like_btn.send_keys(Keys.ENTER)
 
         # 좋아요 횟수 +1
         like_cnt += 1
         print(f"{like_cnt}번째 좋아요: {now}번째 게시글")
+        time.sleep(1)
 
         if like_cnt == n:
             break
+        elif like_cnt%10 == 0:
+            print(f"{like_cnt}건을 좋아요했습니다. 10초 대기 후에 작업 재개합니다.")
+            time.sleep(10)
 
-    if key == m:
+    if len(article_dict.keys()) == m:
         break
-
-

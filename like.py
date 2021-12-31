@@ -101,6 +101,8 @@ key = 0
 now = 0
 # 좋아요 횟수 변수 생성
 like_cnt = 0
+# 좋아요 스킵한 게시글 변수 생성 (10개 이상 스킵 시 작업 종료)
+pass_cnt = 0
 # 조회할 게시글의 수
 m = 200
 # 좋아요할 게시글의 수
@@ -149,6 +151,8 @@ while True:
 
         # 좋아요 횟수 +1
         like_cnt += 1
+        # 좋아요 스킵한 게시글 수 리셋
+        pass_cnt = 0
         print(f"{like_cnt}번째 좋아요: {now}번째 게시글")
         time.sleep(1)
 
@@ -157,6 +161,13 @@ while True:
         elif like_cnt%10 == 0:
             print(f"{like_cnt}건을 좋아요했습니다. 10초 대기 후에 작업 재개합니다.")
             time.sleep(10)
+
+    else:
+        # 좋아요 스킵 시 +1
+        pass_cnt += 1
+        if pass_cnt == 10:
+            print("연속된 10개의 게시글의 좋아요를 스킵하여 아래 게시글은 모두 좋아요를 누른 것으로 판단, 작업 종료합니다.")
+            break
 
     if len(article_dict.keys()) == m:
         break

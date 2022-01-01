@@ -169,5 +169,5 @@ while True:
             print("연속된 10개의 게시글의 좋아요를 스킵하여 아래 게시글은 모두 좋아요를 누른 것으로 판단, 작업 종료합니다.")
             break
 
-    if len(article_dict.keys()) == m:
+    if now == m:
         break
